@@ -12,7 +12,9 @@ const Page = function () {
 
         const img = new Image()
         img.src = paddlePng
-        context.drawImage(img, 0, 0);
+        img.onload = () => {
+            context.drawImage(img, 100, 250);
+        }
 
     }
 
