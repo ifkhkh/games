@@ -2,19 +2,28 @@
 import {imageFromPath, rectCollide} from "../../utils/utils";
 import blockPng from "./image/block.png";
 
-const Block = ({x, y}) => {
+/**
+ * 
+ * @param {Array} position [0, 0] 格式的砖块坐标
+ */
+const Block = (position) => {
     const image = imageFromPath(blockPng)
+    const p = position
     const o = {
         image: image,
-        x: x,
-        y: y,
+        x: p[0],
+        y: p[1],
         w: 40,
         h: 15,
         alive: true,
+        lifes: p[2] || 1,
     }
 
     o.kill = () => {
-        o.alive = false
+        o.lifes--
+        if (o.lifes < 1) {
+            o.alive = false
+        }
     }
 
     o.collide = (ball) => {

@@ -1,6 +1,6 @@
 import {_e} from "../../utils/utils";
-
-const KangGame = (fps) => {
+window.fps = 30
+const KangGame = () => {
     const canvas = _e('#id-canvas')
     const context = canvas.getContext('2d')
     const g = {
@@ -30,8 +30,7 @@ const KangGame = (fps) => {
         g.actions[key] = callback
     }
 
-    setInterval(() => {
-        // events
+    const runLoop = () => {
         const actions = Object.keys(g.actions)
         for (let i = 0; i < actions.length; i++) {
             const key = actions[i]
@@ -50,7 +49,16 @@ const KangGame = (fps) => {
 
         // draw
         g.draw()
-    }, 1000 / fps);
+        setTimeout(() => {
+            // events
+            runLoop(window.fps)
+        }, 1000 / window.fps);
+    }
+
+    setTimeout(() => {
+        // events
+        runLoop(window.fps)
+    }, 1000 / window.fps);
 
     return g
 }
