@@ -1,138 +1,72 @@
 import React, { useEffect } from "react";
 import _css from './page.module.css'
-import { _e, log } from "../../utils/utils";
-import paddlePng from './paddle.png'
-import ballPng from './ball.png'
-
-const KangGame = () => {
-    const canvas = _e('#id-canvas')
-    const context = canvas.getContext('2d')
-    const g = {
-        actions: {},
-        keydowns: {},
-    }
-    g.canvas = canvas
-    g.context = context
-
-    // draw
-    g.drawImage = (paddle) => {
-        g.context.drawImage(paddle.image, paddle.x, paddle.y)
-    }
-
-    // events
-    window.addEventListener('keydown', event => {
-        const k = event.key
-        g.keydowns[k] = true
-    })
-    window.addEventListener('keyup', event => {
-        const k = event.key
-        g.keydowns[k] = false
-    })
-
-    // register
-    g.registerAction = (key, callback) => {
-        g.actions[key] = callback
-    }
-
-    setInterval(() => {
-        // events
-        const actions = Object.keys(g.actions)
-        for (let i = 0; i < actions.length; i++) {
-            const key = actions[i]
-            if (g.keydowns[key]) {
-                // 按键按下时调用
-                g.actions[key]()
-            }
-            
-        }
-
-        // clear
-        context.clearRect(0, 0, canvas.width, canvas.height)
-
-        // update
-        g.update()
-
-        // draw
-        g.draw()
-    }, 1000 / 30);
-
-    return g
-}
-
-const imageFromPath = (path) => {
-    const img = new Image()
-    img.src = path
-    return img
-}
-
-const Paddle = () => {
-    const image = imageFromPath(paddlePng)
-    const o = {
-        image: image,
-        x: 100,
-        y: 200,
-        speed: 5,
-    }
-    o.moveLeft = () => {
-        o.x -= o.speed
-    }
-    o.moveRight = () => {
-        o.x += o.speed
-    }
-    return o
-}
-
-const Ball = () => {
-    const image = imageFromPath(ballPng)
-    const o = {
-        image: image,
-        x: 140,
-        y: 160,
-        speedX: 10,
-        speedY: 10,
-        fired: false,
-    }
-
-    o.fire = () => {
-        o.fired = true
-    }
-
-    o.move = () => {
-        if(o.fired) {
-            if (o.x < 0 || o.x > 400) {
-                o.speedX = - o.speedX
-            }
-            if (o.y < 0 || o.y > 300 ) {
-                o.speedY = - o.speedY
-            }
-            o.x += o.speedX
-            o.y += o.speedY
-        }
-    }
-    return o
-}
+import {Ball} from "./ball";
+import {KangGame} from "./kanggame";
+import {Block} from "./block";
+import {Paddle} from "./paddle";
 
 const Page = function () {
 
 
 
     const __main = () => {
-        const game = KangGame()
+        const game = KangGame(60)
+        let paused = false
 
         const paddle = Paddle()
         const ball = Ball()
 
+        const blocks = []
+        for (let i = 0; i < 3; i++) {
+            const b = Block({
+                x: 100 * (i + 1),
+                y: 50,
+            })
+            blocks.push(b)
+        }
 
-        game.registerAction('a', paddle.moveLeft)
-        game.registerAction('d', paddle.moveRight)
-        game.registerAction('f', ball.fire)
+        // 游戏事件注册
+        game.registerAction('a', paddle.moveLeft) // 左移
+        game.registerAction('d', paddle.moveRight) // 右移
+        game.registerAction('f', ball.fire) // 开始
 
+        window.addEventListener('keydown', (event) =>{
+            const k = event.key
+            if (k === 'p') {
+                paused = !paused
+            }
+        })
+
+        // 游戏刷新帧
         game.update = () => {
+            if (paused) {
+                return
+            }
             ball.move()
+            // 挡板和球
+            if (paddle.collide(ball)) {
+                ball.rebound()
+            }
+
+            // 球和砖块
+            blocks.forEach(b => {
+                if (b.collide(ball)) {
+                    ball.rebound()
+                    b.kill()
+                }
+            })
         }
         game.draw = () => {
             game.drawImage(paddle)
             game.drawImage(ball)
+
+            // block
+            blocks.forEach(b => {
+                if (b.alive) {
+                    game.drawImage(b)
+                }
+            })
+
         }
     }
 
