@@ -2,8 +2,8 @@
 import ballPng from "./image/ball.png";
 import {imageFromPath} from "../../utils/utils";
 
-const Ball = () => {
-    const image = imageFromPath(ballPng)
+const Ball = (game) => {
+    const image = game.imageFromName('ball')
     const o = {
         image: image,
         x: 140,

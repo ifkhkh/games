@@ -1,11 +1,12 @@
-import {_e} from "../../utils/utils";
-window.fps = 30
-const KangGame = () => {
+import {_e, log} from "../../utils/utils";
+const KangGame = (images, callback) => {
+    // images 提前载入图片
     const canvas = _e('#id-canvas')
     const context = canvas.getContext('2d')
     const g = {
         actions: {},
         keydowns: {},
+        images: {}, // 存储载入的图片
     }
     g.canvas = canvas
     g.context = context
@@ -51,14 +52,42 @@ const KangGame = () => {
         g.draw()
         setTimeout(() => {
             // events
-            runLoop(window.fps)
+            runLoop()
         }, 1000 / window.fps);
     }
 
-    setTimeout(() => {
-        // events
-        runLoop(window.fps)
-    }, 1000 / window.fps);
+    g.run = () => {
+        callback(g)
+        setTimeout(() => {
+            // events
+            runLoop()
+        }, 1000 / window.fps);
+    }
+
+    // 预先载入所有图片
+    const loads = []
+    const keys = Object.keys(images)
+
+    for (let i = 0; i < keys.length; i++) {
+        const k = keys[i]
+        const path = images[k]
+
+        const img = new Image()
+        img.src = path
+        img.onload = () => {
+            // 所有图片载入成功后调用 g.run
+            loads.push(1)
+            // 存入 g.images
+            g.images[k] = img
+            if (loads.length === keys.length) {
+                g.run()
+            }
+        }
+    }
+
+    g.imageFromName = (key) => {
+        return g.images[key]
+    }
 
     return g
 }

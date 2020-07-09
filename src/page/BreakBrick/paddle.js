@@ -3,8 +3,8 @@
 import {imageFromPath, rectCollide} from "../../utils/utils";
 import paddlePng from "./image/paddle.png";
 
-const Paddle = () => {
-    const image = imageFromPath(paddlePng)
+const Paddle = (game) => {
+    const image = game.imageFromName('paddle')
     const o = {
         image: image,
         x: 100,

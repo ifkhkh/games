@@ -3,11 +3,12 @@ import {imageFromPath, rectCollide} from "../../utils/utils";
 import blockPng from "./image/block.png";
 
 /**
- * 
+ *
+ * @param {Object} game 游戏对象
  * @param {Array} position [0, 0] 格式的砖块坐标
  */
-const Block = (position) => {
-    const image = imageFromPath(blockPng)
+const Block = (game, position) => {
+    const image = game.imageFromName('block')
     const p = position
     const o = {
         image: image,
