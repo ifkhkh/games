@@ -1,15 +1,14 @@
-import React, { useEffect } from "react";
+import React, {useEffect} from "react";
 import _css from './page.module.css'
-import { Ball } from "./ball";
-import { KangGame } from "./kanggame";
-import { Block } from "./block";
-import { Paddle } from "./paddle";
-import { levels } from "./level";
+import {Ball} from "./ball";
+import {KangGame} from "./kanggame";
+import {Block} from "./block";
+import {Paddle} from "./paddle";
+import {levels} from "./level";
 import {log} from "../../utils/utils";
 import ballPng from "./image/ball.png";
 import blockPng from "./image/block.png";
 import paddlePng from "./image/paddle.png";
-
 
 
 const loadLevel = (game, n) => {
@@ -101,6 +100,40 @@ const Page = function () {
                 // 画出 分数
                 game.context.fillText(`分数: ${score}`, 10, 290)
             }
+
+
+            // mouse event
+            let enableDrag = false
+            let deltaX = 0
+            let deltaY = 0
+            game.canvas.addEventListener('mousedown', event => {
+                const x = event.offsetX
+                const y = event.offsetY
+                if (ball.hasPoint(x, y)) {
+                    enableDrag = true
+                    deltaX = x - ball.x
+                    deltaY = y - ball.y
+                    log(x, y, 'down-----x, y :::  is here-----')
+                }
+            })
+            game.canvas.addEventListener('mousemove', event => {
+                const x = event.offsetX
+                const y = event.offsetY
+                if (ball.hasPoint(x, y) && enableDrag) {
+
+                    log(x-deltaX, y-deltaY, 'move-----x, y :::  is here-----')
+                    ball.x = x - deltaX
+                    ball.y = y - deltaY
+                }
+            })
+            game.canvas.addEventListener('mouseup', event => {
+                const x = event.offsetX
+                const y = event.offsetY
+                if (ball.hasPoint(x, y)) {
+                    enableDrag = false
+                    log(x, y, 'up-----x, y :::  is here-----')
+                }
+            })
         })
 
 
@@ -123,8 +156,8 @@ const Page = function () {
                     height={300}
                 />
             </div>
-            <hr />
-            <input type='range' onChange={handleChangeFps} />
+            <hr/>
+            <input type='range' onChange={handleChangeFps}/>
             <hr/>
             <textarea
                 id='id-text-log'
@@ -132,7 +165,7 @@ const Page = function () {
                     width: 400,
                     height: 300,
                 }}
-                />
+            />
         </div>
     )
 }

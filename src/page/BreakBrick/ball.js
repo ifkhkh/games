@@ -1,6 +1,6 @@
 // 弹球
 import ballPng from "./image/ball.png";
-import {imageFromPath} from "../../utils/utils";
+import {imageFromPath, log} from "../../utils/utils";
 
 const Ball = (game) => {
     const image = game.imageFromName('ball')
@@ -8,6 +8,8 @@ const Ball = (game) => {
         image: image,
         x: 140,
         y: 160,
+        w: image.width,
+        h: image.height,
         speedX: 5,
         speedY: 5,
         fired: false, // 是否开始发射
@@ -35,6 +37,12 @@ const Ball = (game) => {
     // 反弹
     o.rebound = () => {
         o.speedY *= -1
+    }
+
+    o.hasPoint = (x, y) => {
+        const xIn = x >= o.x && x <= o.x + o.w
+        const yIn = y >= o.y && y <= o.y + o.h
+        return xIn && yIn
     }
 
     // 停止
