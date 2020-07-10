@@ -4,6 +4,7 @@ const KangGame = (images, callback) => {
     const canvas = _e('#id-canvas')
     const context = canvas.getContext('2d')
     const g = {
+        scene: null,
         actions: {},
         keydowns: {},
         images: {}, // 存储载入的图片
@@ -31,6 +32,11 @@ const KangGame = (images, callback) => {
         g.actions[key] = callback
     }
 
+    g.replaceScene = scene => {
+        log(scene, g.scene, '-----scene, g.scene :::  is here-----')
+        g.scene = scene
+    }
+
     const runLoop = () => {
         const actions = Object.keys(g.actions)
         for (let i = 0; i < actions.length; i++) {
@@ -46,17 +52,17 @@ const KangGame = (images, callback) => {
         context.clearRect(0, 0, canvas.width, canvas.height)
 
         // update
-        g.update()
+        g.scene.update()
 
         // draw
-        g.draw()
+        g.scene.draw()
         setTimeout(() => {
             // events
             runLoop()
         }, 1000 / window.fps);
     }
 
-    g.run = () => {
+    g.__start = () => {
         callback(g)
         setTimeout(() => {
             // events
@@ -80,7 +86,7 @@ const KangGame = (images, callback) => {
             // 存入 g.images
             g.images[k] = img
             if (loads.length === keys.length) {
-                g.run()
+                g.__start()
             }
         }
     }

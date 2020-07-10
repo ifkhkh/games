@@ -1,7 +1,6 @@
 
 // 挡板
-import {imageFromPath, rectCollide} from "../../utils/utils";
-import paddlePng from "./image/paddle.png";
+import {rectCollide} from "../../utils/utils";
 
 const Paddle = (game) => {
     const image = game.imageFromName('paddle')
@@ -9,6 +8,8 @@ const Paddle = (game) => {
         image: image,
         x: 100,
         y: 285,
+        w: image.width,
+        h: image.height,
         speed: 10,
     }
 

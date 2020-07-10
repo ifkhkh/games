@@ -1,6 +1,5 @@
 // 砖块
-import {imageFromPath, rectCollide} from "../../utils/utils";
-import blockPng from "./image/block.png";
+import {rectCollide} from "../../utils/utils";
 
 /**
  *

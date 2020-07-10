@@ -1,7 +1,4 @@
 // 弹球
-import ballPng from "./image/ball.png";
-import {imageFromPath, log} from "../../utils/utils";
-
 const Ball = (game) => {
     const image = game.imageFromName('ball')
     const o = {
@@ -19,6 +16,7 @@ const Ball = (game) => {
     o.fire = () => {
         o.fired = true
     }
+
 
     // 移动
     o.move = () => {
