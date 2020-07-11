@@ -1,8 +1,15 @@
-import {Paddle} from "./paddle";
-import {Ball} from "./ball";
-import {log} from "../../utils/utils";
-import {levels, loadLevel} from "./level";
+import {Paddle} from "../paddle";
+import {Ball} from "../ball";
+import {log} from "../../../utils/utils";
+import {levels, loadLevel} from "../level";
 import SceneEnd from "./scene_end";
+// import KangScene from "./kang_scene";
+
+// class Scene extends KangScene {
+//     constructor(...params) {
+//         super(...params)
+//     }
+// }
 
 const Scene = (game) => {
     const s = {
@@ -16,7 +23,6 @@ const Scene = (game) => {
 
     window.blocks = loadLevel(game, levels, 1)
 
-    window.fps = 30
 
     // 游戏事件注册
     game.registerAction('a', paddle.moveLeft) // 左移
@@ -47,7 +53,7 @@ const Scene = (game) => {
         // 挡板和球
         if (ball.y + ball.h >= paddle.y + paddle.h) {
             // 跳转游戏结束场景
-            const end = SceneEnd(game)
+            const end = SceneEnd.new(game)
             game.replaceScene(end)
             return
         }

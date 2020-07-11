@@ -1,101 +1,119 @@
-import {_e, log} from "../../utils/utils";
-const KangGame = (images, callback) => {
-    // images 提前载入图片
-    const canvas = _e('#id-canvas')
-    const context = canvas.getContext('2d')
-    const g = {
-        scene: null,
-        actions: {},
-        keydowns: {},
-        images: {}, // 存储载入的图片
+import { _e } from "../../utils/utils";
+class KangGame {
+    constructor(images, callback) {
+        window.fps = 30
+        this.imagesList = images
+        this.callback = callback
+
+        this.scene = null
+        this.actions = {}
+        this.keydowns = {}
+        this.images = {} // 存储载入的图片
+
+        this.canvas = _e('#id-canvas')
+        this.context = this.canvas.getContext('2d')
+
+        // events
+        const self = this
+        window.addEventListener('keydown', event => {
+            const k = event.key
+            self.keydowns[k] = true
+        })
+        window.addEventListener('keyup', event => {
+            const k = event.key
+            self.keydowns[k] = false
+        })
+
+        this.__init()
     }
-    g.canvas = canvas
-    g.context = context
+
+    static instance = (...params) => {
+        if (this.i === undefined) {
+            this.i = new this(...params)
+        }
+        return this.i
+    }
 
     // draw
-    g.drawImage = (kangElement) => {
-        g.context.drawImage(kangElement.image, kangElement.x, kangElement.y)
+    drawImage = (kangElement) => {
+        this.context.drawImage(kangElement.image, kangElement.x, kangElement.y)
     }
-
-    // events
-    window.addEventListener('keydown', event => {
-        const k = event.key
-        g.keydowns[k] = true
-    })
-    window.addEventListener('keyup', event => {
-        const k = event.key
-        g.keydowns[k] = false
-    })
 
     // register
-    g.registerAction = (key, callback) => {
-        g.actions[key] = callback
+    registerAction = (key, callback) => {
+        this.actions[key] = callback
     }
 
-    g.replaceScene = scene => {
-        log(scene, g.scene, '-----scene, g.scene :::  is here-----')
-        g.scene = scene
+    // 替换更新场景
+    replaceScene = scene => {
+        this.scene = scene
     }
 
-    const runLoop = () => {
-        const actions = Object.keys(g.actions)
+    // 根据 key 读取图片
+    imageFromName = (key) => {
+        return this.images[key]
+    }
+
+    // 循环清空重新绘制画面
+    runLoop = () => {
+        const self = this
+        const actions = Object.keys(self.actions)
         for (let i = 0; i < actions.length; i++) {
             const key = actions[i]
-            if (g.keydowns[key]) {
+            if (self.keydowns[key]) {
                 // 按键按下时调用
-                g.actions[key]()
+                self.actions[key]()
             }
 
         }
 
         // clear
-        context.clearRect(0, 0, canvas.width, canvas.height)
+        self.context.clearRect(0, 0, self.canvas.width, self.canvas.height)
 
         // update
-        g.scene.update()
+        self.scene.update()
 
         // draw
-        g.scene.draw()
+        self.scene.draw()
         setTimeout(() => {
             // events
-            runLoop()
+            self.runLoop()
         }, 1000 / window.fps);
     }
 
-    g.__start = () => {
-        callback(g)
+    __start = () => {
+        const self = this
+        self.callback(self)
         setTimeout(() => {
             // events
-            runLoop()
+            self.runLoop()
         }, 1000 / window.fps);
     }
 
-    // 预先载入所有图片
-    const loads = []
-    const keys = Object.keys(images)
+    __init = () => {
+        const self = this
+        // 预先载入所有图片
+        const loads = []
+        const images = self.imagesList
+        const keys = Object.keys(images)
 
-    for (let i = 0; i < keys.length; i++) {
-        const k = keys[i]
-        const path = images[k]
-
-        const img = new Image()
-        img.src = path
-        img.onload = () => {
-            // 所有图片载入成功后调用 g.run
-            loads.push(1)
-            // 存入 g.images
-            g.images[k] = img
-            if (loads.length === keys.length) {
-                g.__start()
+        for (let i = 0; i < keys.length; i++) {
+            const k = keys[i]
+            const path = images[k]
+    
+            const img = new Image()
+            img.src = path
+            img.onload = () => {
+                // 所有图片载入成功后调用 g.run
+                loads.push(1)
+                // 存入 g.images
+                self.images[k] = img
+                if (loads.length === keys.length) {
+                    self.__start()
+                }
             }
         }
     }
-
-    g.imageFromName = (key) => {
-        return g.images[key]
-    }
-
-    return g
 }
 
 export {

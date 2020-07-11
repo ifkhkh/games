@@ -5,7 +5,7 @@ import {levels, loadLevel} from "./level";
 import ballPng from "./image/ball.png";
 import blockPng from "./image/block.png";
 import paddlePng from "./image/paddle.png";
-import Scene from "./scene";
+import SceneTitle from "./scene/scene_title";
 
 
 const enableDebugMode = (game, enable) => {
@@ -29,40 +29,19 @@ const Page = function () {
 
     const __main = () => {
 
-
         const images = {
             paddle: paddlePng,
             ball: ballPng,
             block: blockPng,
         }
-        const game = KangGame(images, (g) => {
 
-            g.scene = Scene(g)
-            // const paddle = Paddle(g)
-            // const ball = Ball(g)
-            // let score = 0
-            //
-            // window.blocks = loadLevel(g, 1)
-
-
-
-
-            // 游戏刷新帧
-            // game.update = () => {
-            //
-            //     // s.update
-            //     scene.update()
-            // }
-            // game.draw = () => {
-            //     // s.draw
-            //     scene.draw()
-            // }
-
-
-
+        // 实例化 game
+        const game = KangGame.instance(images, (g) => {
+            // 初始化场景
+            g.replaceScene(SceneTitle.new(g))
         })
 
-
+        // debug 模式
         enableDebugMode(game, true)
 
     }
@@ -73,6 +52,7 @@ const Page = function () {
     const handleChangeFps = event => {
         window.fps = event.target.value
     }
+
     return (
         <div>
             <div>
