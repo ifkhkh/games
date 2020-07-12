@@ -2,6 +2,7 @@ import React from "react";
 import {
     Test,
     BreakBricks,
+    AirWar,
 } from "./index";
 
 const Error = function () {
@@ -26,6 +27,11 @@ const routeMap = [
     {
         path: '/break_bricks',
         component: BreakBricks,
+        exact: true,
+    },
+    {
+        path: '/air_war',
+        component: AirWar,
         exact: true,
     },
 
