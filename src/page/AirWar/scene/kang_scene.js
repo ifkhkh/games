@@ -21,7 +21,8 @@ class KangScene {
         const eList = this.elements
         for (let i = 0; i < eList.length; i++) {
             const e = eList[i]
-            this.game.drawImage(e)
+            // this.game.drawImage(e)
+            e.draw(e)
         }
     }
 

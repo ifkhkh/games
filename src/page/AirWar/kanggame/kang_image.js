@@ -18,6 +18,10 @@ class KangImage {
         }
         return this.i
     }
+
+    draw() {
+        this.game.drawImage(this)
+    }
 }
 
 export {
