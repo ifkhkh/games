@@ -1,4 +1,4 @@
-import { _e } from "../../utils/utils";
+import { _e } from "../../../utils/utils";
 class KangGame {
     constructor(images, callback) {
         window.fps = 30

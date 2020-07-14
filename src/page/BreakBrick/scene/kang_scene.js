@@ -11,7 +11,7 @@ class KangScene {
 
     draw() {
         // 希望后代必须继承重构的函数可以添加默认行为来提醒
-        console.log('重构我 draw')
+        // console.log('重构我 draw')
     }
 
     update() {

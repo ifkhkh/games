@@ -38,10 +38,23 @@ const rectCollide = ({x1, y1, w1, h1, x2, y2, w2, h2}) => {
         x1 > x2 + w2
     )
 }
+
+/**
+ * 获取指定区间随机数
+ * @param start
+ * @param end
+ * @return {number}
+ */
+const randomBetween = (start, end) => {
+    const n = Math.random() * (end - start + 1)
+    return Math.floor(n + start)
+}
+
 export {
     log,
     _e,
     _es,
     imageFromPath,
     rectCollide,
+    randomBetween,
 }
