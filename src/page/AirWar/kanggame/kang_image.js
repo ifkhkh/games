@@ -20,6 +20,8 @@ class KangImage {
     }
 
     draw() {
+        // 抽象到 game.drawImage 里统一 draw
+        // 等于是内部的 element 变得更抽象了
         this.game.drawImage(this)
     }
 }
