@@ -4,6 +4,7 @@ class KangScene {
     constructor(game) {
         this.game = game
         this.elements = []
+        this.id = 0
         this.debugModeEnabled = true
     }
 
@@ -12,9 +13,20 @@ class KangScene {
         return i
     }
 
+    idTemp() {
+        this.id = this.id + 1
+        return this.id
+    }
+
     addElements(kangImage) {
         kangImage.scene = this
+        kangImage.id = this.idTemp()
         this.elements.push(kangImage)
+    }
+
+    removeElements(id) {
+        const index = this.elements.findIndex(who => who.id=== id)
+        this.elements.splice(index, 1)
     }
 
     draw() {
@@ -30,7 +42,6 @@ class KangScene {
         const eList = this.elements
         for (let i = 0; i < eList.length; i++) {
             const e = eList[i]
-            // log(e, '-----e :::  is here-----')
             e.update && e.update()
         }
         if (this.debugModeEnabled) {

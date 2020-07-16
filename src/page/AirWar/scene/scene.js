@@ -1,10 +1,12 @@
-import {log, randomBetween} from "../../../utils/utils";
+import {randomBetween, rectCollide} from "../../../utils/utils";
 import KangScene from "./kang_scene";
 import {KangImage} from "../kanggame/kang_image";
+import KangParticleSystem from "../kanggame/kang_particle_system";
 
 class Bullet extends KangImage {
     constructor(game) {
         super(game, 'bullet');
+        this.game = game
         this.setup()
     }
 
@@ -14,6 +16,30 @@ class Bullet extends KangImage {
 
     update() {
         this.y -= this.speed
+        this.game.scene.enemies.forEach(e => {
+            const collide = rectCollide({
+                x1: e.x,
+                y1: e.y,
+                w1: e.w,
+                h1: e.h,
+                x2: this.x,
+                y2: this.y,
+                w2: this.w,
+                h2: this.h,
+            })
+            if (collide) {
+                // 如果子弹跟场景中的敌人碰撞
+                // 敌人死了
+                e.live = false
+            }
+        })
+        if (this.y < 0) {
+            this.die()
+        }
+    }
+
+    die() {
+        this.game.scene.removeElements(this.id)
     }
 
     debug() {
@@ -41,7 +67,7 @@ class Player extends KangImage {
     }
 
     moveRight() {
-        log('right----- :::  is here-----')
+        // log('right----- :::  is here-----')
         this.x += this.speed
         if (this.x >= 400 - this.w) {
             this.x = 400 - this.w
@@ -97,12 +123,29 @@ class Enemy extends KangImage {
         this.speed = randomBetween(2, 5)
         this.x = randomBetween(0, 350)
         this.y = -randomBetween(0, 200)
+        this.live = true
     }
 
     update() {
         this.y += this.speed
         if (this.y >= 600) {
             this.setup()
+        }
+        if (!this.live) {
+            // 击中死亡就爆炸
+            const x = this.x + this.w / 2
+            const y = this.y + this.h / 2
+            const boom = new KangParticleSystem(this.game, x, y)
+            this.game.scene.addElements(boom)
+            // 敌人死了就重置
+            // this.setup()
+            // 或者死了就并且删掉
+            this.game.scene.removeElements(this.id)
+            // 延迟删除火花
+            const i = setTimeout(() => {
+                this.game.scene.removeElements(boom.id)
+                clearTimeout(i)
+            }, 200)
         }
     }
 
@@ -137,8 +180,6 @@ class Cloud extends KangImage {
 class Scene extends KangScene {
     constructor(game) {
         super(game)
-
-
         this.setup()
         this.setupInputs()
     }
@@ -157,7 +198,9 @@ class Scene extends KangScene {
         this.addElements(this.bg) // 背景
         this.addClouds() // 云朵
         this.addElements(this.player) // 飞机
-        this.addEnemies() // 敌军
+        // this.addEnemies() // 敌军
+
+        // this.addElements(new KangParticleSystem(game))
     }
 
     addClouds() {
@@ -169,7 +212,15 @@ class Scene extends KangScene {
     }
 
     addEnemies() {
-        for (let i = 0; i < this.numberOfEnemies; i++) {
+        // for (let i = 0; i < this.numberOfEnemies; i++) {
+        //     const e = new Enemy(this.game)
+        //     this.addElements(e)
+        //     this.enemies.push(e)
+        // }
+        // 更新本场景敌人
+        this.enemies = this.enemies.filter(who => who.live)
+        // 补充死掉删除的敌人
+        if (this.enemies.length < this.numberOfEnemies) {
             const e = new Enemy(this.game)
             this.addElements(e)
             this.enemies.push(e)
@@ -188,6 +239,8 @@ class Scene extends KangScene {
     }
 
     update() {
+        // 动态更新敌人
+        this.addEnemies()
         super.update();
     }
 

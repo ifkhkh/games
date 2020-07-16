@@ -9,15 +9,15 @@ class KangImage {
     }
 
     static new = (game, name) => {
-        return this.i || new this(game, name)
+        return new this(game, name)
     }
 
-    static instance = (...params) => {
-        if (this.i === undefined) {
-            this.i = new this(...params)
-        }
-        return this.i
-    }
+    // static instance = (...params) => {
+    //     if (this.i === undefined) {
+    //         this.i = new this(...params)
+    //     }
+    //     return this.i
+    // }
 
     draw() {
         // 抽象到 game.drawImage 里统一 draw

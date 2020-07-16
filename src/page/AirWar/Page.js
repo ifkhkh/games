@@ -13,7 +13,6 @@ import cloud2Png from './image/cloud2.png'
 import firePng from './image/fire.png'
 import Scene from "./scene/scene";
 import {_e} from "../../utils/utils";
-import SceneTitle from "./scene/scene_title";
 
 
 const enableDebugMode = (game, enable) => {
@@ -65,8 +64,8 @@ const Page = function () {
         // 实例化 game
         const game = KangGame.instance(images, (g) => {
             // 初始化场景
-            // g.replaceScene(Scene.new(g))
-            g.replaceScene(SceneTitle.new(g))
+            g.replaceScene(Scene.new(g))
+            // g.replaceScene(SceneTitle.new(g))
         })
 
         // debug 模式
