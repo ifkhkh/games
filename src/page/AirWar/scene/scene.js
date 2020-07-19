@@ -2,6 +2,7 @@ import {randomBetween, rectCollide} from "../../../utils/utils";
 import KangScene from "./kang_scene";
 import {KangImage} from "../kanggame/kang_image";
 import KangParticleSystem from "../kanggame/kang_particle_system";
+import SceneEnd from "./scene_end";
 
 class Bullet extends KangImage {
     constructor(game) {
@@ -30,7 +31,7 @@ class Bullet extends KangImage {
             if (collide) {
                 // 如果子弹跟场景中的敌人碰撞
                 // 敌人死了
-                e.live = false
+                e.die = true
             }
         })
         if (this.y < 0) {
@@ -39,7 +40,7 @@ class Bullet extends KangImage {
     }
 
     die() {
-        this.game.scene.removeElements(this.id)
+        this.game.scene.removeElement(this.id)
     }
 
     debug() {
@@ -57,6 +58,7 @@ class Player extends KangImage {
         this.speed = window.config.player_speed
         this.cooldown = 0 // 冷却时间
         this.coolDownMax = window.config.fire_cooldown
+        this.die = false
     }
 
     moveLeft() {
@@ -101,8 +103,37 @@ class Player extends KangImage {
     }
 
     update() {
+        if (this.die) {
+            this.game.scene.dieWithParticle(this)
+            const n = setTimeout(() => {
+                this.game.replaceScene(SceneEnd.new(this.game))
+                clearTimeout(n)
+            }, 200)
+            return
+        }
         if (this.cooldown > 0) {
             this.cooldown--
+        }
+
+        // 检测敌我碰撞
+        const p = this
+        const enemies = this.game.scene.enemies
+        for (let i = 0; i < enemies.length; i++) {
+            const e = enemies[i]
+            const boom = rectCollide({
+                x1: e.x,
+                y1: e.y,
+                w1: e.w,
+                h1: e.h,
+                x2: p.x,
+                y2: p.y,
+                w2: p.w,
+                h2: p.h,
+            })
+            if (boom) {
+                p.die = true
+                break
+            }
         }
     }
 
@@ -123,7 +154,7 @@ class Enemy extends KangImage {
         this.speed = randomBetween(2, 5)
         this.x = randomBetween(0, 350)
         this.y = -randomBetween(0, 200)
-        this.live = true
+        this.die = false
     }
 
     update() {
@@ -131,21 +162,8 @@ class Enemy extends KangImage {
         if (this.y >= 600) {
             this.setup()
         }
-        if (!this.live) {
-            // 击中死亡就爆炸
-            const x = this.x + this.w / 2
-            const y = this.y + this.h / 2
-            const boom = new KangParticleSystem(this.game, x, y)
-            this.game.scene.addElements(boom)
-            // 敌人死了就重置
-            // this.setup()
-            // 或者死了就并且删掉
-            this.game.scene.removeElements(this.id)
-            // 延迟删除火花
-            const i = setTimeout(() => {
-                this.game.scene.removeElements(boom.id)
-                clearTimeout(i)
-            }, 200)
+        if (this.die) {
+            this.game.scene.dieWithParticle(this)
         }
     }
 
@@ -218,7 +236,7 @@ class Scene extends KangScene {
         //     this.enemies.push(e)
         // }
         // 更新本场景敌人
-        this.enemies = this.enemies.filter(who => who.live)
+        this.enemies = this.enemies.filter(who => !who.die)
         // 补充死掉删除的敌人
         if (this.enemies.length < this.numberOfEnemies) {
             const e = new Enemy(this.game)
@@ -249,6 +267,16 @@ class Scene extends KangScene {
     //     // this.game.drawImage(this.player)
     // }
 
+    dieWithParticle(element) {
+        // 击中死亡就爆炸
+        const x = element.x + element.w / 2
+        const y = element.y + element.h / 2
+        const boom = new KangParticleSystem(this.game, x, y)
+        this.addElements(boom)
+        // 死了就爆炸并且删除
+        this.removeElement(element.id)
+    }
+
     static instance = (...params) => {
         if (this.i === undefined) {
             this.i = new this(...params)
@@ -256,104 +284,5 @@ class Scene extends KangScene {
         return this.i
     }
 }
-
-// const Scene = (game) => {
-//     const s = {
-//         game: game,
-//     }
-//
-//     // 初始化
-//     const paddle = Paddle(game)
-//     const ball = Ball(game)
-//     let score = 0
-//
-//     window.blocks = loadLevel(game, levels, 1)
-//
-//
-//     // 游戏事件注册
-//     game.registerAction('a', paddle.moveLeft) // 左移
-//     game.registerAction('d', paddle.moveRight) // 右移
-//     game.registerAction('f', ball.fire) // 开始
-//
-//     s.draw = () => {
-//
-//         game.drawImage(paddle)
-//         game.drawImage(ball)
-//
-//         // block
-//         window.blocks.forEach(b => {
-//             if (b.alive) {
-//                 game.drawImage(b)
-//             }
-//         })
-//
-//         // 画出 分数
-//         game.context.fillText(`分数: ${score}`, 10, 290)
-//     }
-//
-//     s.update = () => {
-//         if (window.paused) {
-//             return
-//         }
-//         ball.move()
-//         // 挡板和球
-//         if (ball.y + ball.h >= paddle.y + paddle.h) {
-//             // 跳转游戏结束场景
-//             const end = SceneEnd.new(game)
-//             game.replaceScene(end)
-//             return
-//         }
-//         if (paddle.collide(ball)) {
-//             ball.rebound()
-//         }
-//
-//         // 球和砖块
-//         window.blocks.forEach(b => {
-//             if (b.collide(ball)) {
-//                 ball.rebound()
-//                 b.kill()
-//
-//                 // 更新分数
-//                 score += 10
-//                 log(score, '-----score :::  is here-----')
-//             }
-//         })
-//     }
-//
-//     // mouse event
-//     let enableDrag = false
-//     let deltaX = 0
-//     let deltaY = 0
-//     game.canvas.addEventListener('mousedown', event => {
-//         const x = event.offsetX
-//         const y = event.offsetY
-//         if (ball.hasPoint(x, y)) {
-//             enableDrag = true
-//             deltaX = x - ball.x
-//             deltaY = y - ball.y
-//             log(x, y, 'down-----x, y :::  is here-----')
-//         }
-//     })
-//     game.canvas.addEventListener('mousemove', event => {
-//         const x = event.offsetX
-//         const y = event.offsetY
-//         if (ball.hasPoint(x, y) && enableDrag) {
-//
-//             log(x-deltaX, y-deltaY, 'move-----x, y :::  is here-----')
-//             ball.x = x - deltaX
-//             ball.y = y - deltaY
-//         }
-//     })
-//     game.canvas.addEventListener('mouseup', event => {
-//         const x = event.offsetX
-//         const y = event.offsetY
-//         if (ball.hasPoint(x, y)) {
-//             enableDrag = false
-//             log(x, y, 'up-----x, y :::  is here-----')
-//         }
-//     })
-//
-//     return s
-// }
 
 export default Scene

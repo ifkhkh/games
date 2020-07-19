@@ -20,13 +20,15 @@ class KangScene {
 
     addElements(kangImage) {
         kangImage.scene = this
+        // 所有增加到场景内的 元素 都有个 id
         kangImage.id = this.idTemp()
         this.elements.push(kangImage)
     }
 
-    removeElements(id) {
+    removeElement(id) {
         const index = this.elements.findIndex(who => who.id=== id)
         this.elements.splice(index, 1)
+        console.log(id, this.elements, 'remove')
     }
 
     draw() {

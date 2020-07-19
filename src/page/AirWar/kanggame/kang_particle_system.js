@@ -40,10 +40,12 @@ class KangParticleSystem {
     }
 
     setup(x, y) {
+        this.id = null
         this.x = x || 150
         this.y = y || 200
         this.numberOfParticles = 10
         this.particles = []
+        this.duration = 7 // 粒子持续存在的帧数
     }
 
     update() {
@@ -60,6 +62,10 @@ class KangParticleSystem {
         // 根据指定帧数, 删除死掉的小火花, 限定爆炸范围
         this.particles = this.particles.filter(who => who.life > 0).concat()
 
+        this.duration--
+        if (this.duration < 0) {
+            this.game.scene.removeElement(this.id)
+        }
     }
 
     draw() {
