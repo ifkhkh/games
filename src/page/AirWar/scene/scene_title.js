@@ -1,8 +1,7 @@
 import Scene from "./scene"
 import KangScene from "./kang_scene";
-import KangParticleSystem from "../kanggame/kang_particle_system";
 
-// 抽象出来的类似 kangmage
+// 抽象出来的类似 kangImage
 class KangLabel {
     constructor(game, text) {
         this.game = game
@@ -19,7 +18,6 @@ class KangLabel {
     }
 }
 
-
 class SceneTitle extends KangScene {
     constructor(game) {
         super(game)
@@ -29,8 +27,6 @@ class SceneTitle extends KangScene {
 
         this.label = new KangLabel(game, 'test text')
         this.addElements(this.label)
-        const ps = new KangParticleSystem(game)
-        this.addElements(ps)
     }
 
     draw() {
