@@ -1,0 +1,44 @@
+.main {
+    width: 1028px;
+    height: 674px;
+    background-color: #282c34;
+    padding: 30px;
+}
+
+.head {
+
+}
+
+.card {
+    display: inline-block;
+    width: 94px;
+    height: 130px;
+    background-color: brown;
+    border: 5px solid #fff;
+    border-radius: 10px;
+    margin-right: 16px;
+}
+
+.bottom {
+    padding-top: 60px;
+}
+
+.bottomItem {
+    position: absolute;
+    left: 0;
+    width: 94px;
+    height: 130px;
+    background-color: brown;
+    border: 5px solid #FFF;
+    border-radius: 10px;
+    margin-right: 16px;
+    color: white;
+}
+
+.bottomList {
+    width: 94px;
+    height: 130px;
+    position: relative;
+    display: inline-block;
+    margin-right: 16px;
+}

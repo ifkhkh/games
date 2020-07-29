@@ -3,6 +3,7 @@ import {
     Test,
     BreakBricks,
     AirWar,
+    Solitaire,
 } from "./index";
 
 const Error = function () {
@@ -32,6 +33,12 @@ const routeMap = [
     {
         path: '/air_war',
         component: AirWar,
+        exact: true,
+    },
+
+    {
+        path: '/solitaire',
+        component: Solitaire,
         exact: true,
     },
 
