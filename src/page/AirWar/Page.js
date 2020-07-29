@@ -10,8 +10,13 @@ import enemy2Png from './image/enemy2.png'
 import cloud0Png from './image/cloud0.png'
 import cloud1Png from './image/cloud1.png'
 import cloud2Png from './image/cloud2.png'
+import w1Png from './image/run/w1.png'
+import w2Png from './image/run/w2.png'
+import w3Png from './image/run/w3.png'
+import w4Png from './image/run/w4.png'
 import firePng from './image/fire.png'
 import Scene from "./scene/scene";
+import SceneTitle from "./scene/scene_title";
 import {_e} from "../../utils/utils";
 
 
@@ -59,13 +64,18 @@ const Page = function () {
             cloud1: cloud1Png,
             cloud2: cloud2Png,
             fire: firePng,
+            // 跑步动画
+            w1: w1Png,
+            w2: w2Png,
+            w3: w3Png,
+            w4: w4Png,
         }
 
         // 实例化 game
         const game = KangGame.instance(images, (g) => {
             // 初始化场景
-            g.replaceScene(Scene.new(g))
-            // g.replaceScene(SceneTitle.new(g))
+            // g.replaceScene(Scene.new(g))
+            g.replaceScene(SceneTitle.new(g))
         })
 
         // debug 模式

@@ -37,6 +37,7 @@ class KangGame {
     // draw
     drawImage = (kangImage) => {
         // 参数是一个 kangImage
+        // console.log(kangImage, '-----kangImage :::  is here-----')
         this.context.drawImage(kangImage.texture, kangImage.x, kangImage.y)
     }
 
@@ -52,6 +53,7 @@ class KangGame {
 
     // 根据 key 读取图片
     textureByName = (key) => {
+        // console.log(key, this.images)
         return this.images[key]
     }
 
